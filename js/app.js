@@ -15,7 +15,7 @@ document.getElementById('resetForm').addEventListener('submit', async (e) => {
   }
 
   // Send password reset request to backend
-  const response = await fetch('https://a850-108-238-103-8.ngrok-free.app/reset-password', {
+  const response = await fetch('https://a850-108-238-103-8.ngrok-free.app/auth/reset-password', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, password })
