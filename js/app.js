@@ -1,6 +1,10 @@
-// Get the token from the URL
+// Get token and optional custom URL from the query parameters
 const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get('token');
+const customUrl = urlParams.get('url');
+
+// Set base URL (default to prod if none provided)
+const BASE_URL = customUrl || 'https://stream-nest-api.com';
 
 document.getElementById('resetForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -14,17 +18,20 @@ document.getElementById('resetForm').addEventListener('submit', async (e) => {
     return;
   }
 
-  // Send password reset request to backend
-  const response = await fetch('https://a850-108-238-103-8.ngrok-free.app/auth/reset-password', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token, password })
-  });
+  try {
+    const response = await fetch(`${BASE_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, password })
+    });
 
-  const result = await response.json();
-  if (response.ok) {
-    messageElement.innerText = 'Password reset successful!';
-  } else {
-    messageElement.innerText = result.message || 'Error resetting password';
+    const result = await response.json();
+    if (response.ok) {
+      messageElement.innerText = 'Password reset successful!';
+    } else {
+      messageElement.innerText = result.message || 'Error resetting password';
+    }
+  } catch (error) {
+    messageElement.innerText = 'Network error. Please try again.';
   }
 });
