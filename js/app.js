@@ -2,6 +2,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get('token');
 const customUrl = urlParams.get('url');
+
 // Set base URL (default to prod if none provided)
 const BASE_URL = customUrl || 'https://stream-nest-api.com';
 
@@ -85,20 +86,15 @@ document.getElementById('resetForm').addEventListener('submit', async (e) => {
     const result = await response.json();
     
     if (response.ok) {
-      messageText.innerText = 'Password reset successful! You can now login with your new password.';
-      messageElement.className = 'message success';
+      // Hide the form and show success page
+      document.getElementById('resetFormContainer').style.display = 'none';
+      document.getElementById('successPage').classList.add('active');
       
       // Clear form
       document.getElementById('resetForm').reset();
       passwordStrength.className = 'password-strength';
-      
-      // Optionally redirect after success
-      setTimeout(() => {
-        // You can redirect to login page if needed
-        // window.location.href = '/login';
-      }, 3000);
     } else {
-      messageText.innerText = result.message || 'Error resetting password. Please try again.';
+      messageText.innerText = result.message || 'Error resetting password. The link may have expired.';
       messageElement.className = 'message error';
     }
   } catch (error) {
@@ -110,3 +106,12 @@ document.getElementById('resetForm').addEventListener('submit', async (e) => {
     buttonText.innerHTML = 'Reset Password';
   }
 });
+
+// Check if token exists on page load
+if (!token) {
+  const messageElement = document.getElementById('message');
+  const messageText = document.getElementById('messageText');
+  messageText.innerText = 'Invalid reset link. Please request a new password reset.';
+  messageElement.className = 'message error';
+  document.getElementById('submitBtn').disabled = true;
+}
